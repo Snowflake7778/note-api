@@ -41,7 +41,7 @@ jobs:
       - run: echo "Test run status: ${{ job.status }}."
 
       - name: Upload coverage report
-        if: always()
+        if: success()
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
