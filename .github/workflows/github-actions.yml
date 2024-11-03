@@ -55,10 +55,15 @@ jobs:
       - name: Install snyk
         run: npm install -g snyk
 
-      - name: Run Snyk to check for vulnerabilities
+      - name: Run Snyk to check for vulnerabilities in requirements.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --file=requirements.txt --file=requirements-dev.txt --all-projects
+        run: snyk test --file=requirements.txt
+
+      - name: Run Snyk to check for vulnerabilities in requirements-dev.txt
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk test --file=requirements-dev.txt
 
   Build-and-Push-Container:
     runs-on: ubuntu-latest
