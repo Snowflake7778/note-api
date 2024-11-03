@@ -64,12 +64,13 @@ jobs:
       - name: Run Snyk to check for vulnerabilities in requirements.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --file=requirements.txt
+        run: snyk test --file=requirements.txt --package-manager=pip
 
       - name: Run Snyk to check for vulnerabilities in requirements-dev.txt
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --file=requirements-dev.txt
+        run: snyk test --file=requirements-dev.txt --package-manager=pip
+
 
   Build-and-Push-Container:
     runs-on: ubuntu-latest
