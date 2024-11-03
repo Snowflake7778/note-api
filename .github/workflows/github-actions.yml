@@ -70,6 +70,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: snyk test --file=requirements-dev.txt
+        
 
   Build-and-Push-Container:
     runs-on: ubuntu-latest
