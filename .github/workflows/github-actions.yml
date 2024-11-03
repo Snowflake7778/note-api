@@ -94,4 +94,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/Snowflake7778/note-api:latest
+          tags: ghcr.io/snowflake7778/note-api:latest
