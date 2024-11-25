@@ -1,0 +1,55 @@
+name: Python Tests
+
+on:
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  Run-Pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The job was triggered by a ${{ github.event_name }} event for the repository ${{ github.repository }}."
+      - run: echo "Running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "The branch being tested is ${{ github.ref }}."
+
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "The repository has been cloned into ${{ github.workspace }}."
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - run: echo "Installing dependencies..."
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          pip install coverage
+          
+      - run: echo "Running tests with parallel execution and measuring coverage..."
+      - name: Run tests with pytest and coverage
+        run: |
+          pytest --cov=./ --cov-report=xml --numprocesses=auto
+          
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
+
+      - name: Upload coverage report to GitHub Artifacts
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+      - name: Test run status
+        run: |
+          echo "Test run status: ${{ job.status }}"
