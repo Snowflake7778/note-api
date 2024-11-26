@@ -23,7 +23,7 @@ jobs:
       - name: Set Google Cloud Project
         run: |
           gcloud config set project 707561499774
-          gcloud config set run/region us-central1
+          gcloud config set run/region europe-west3
 
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
