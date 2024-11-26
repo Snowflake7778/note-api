@@ -38,4 +38,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: Snowflake7778/note-api:${{ env.tag }}
+          tags: snowflake7778/note-api:${{ env.tag }}
