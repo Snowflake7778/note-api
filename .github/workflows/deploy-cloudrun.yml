@@ -9,10 +9,27 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    env:
+      tag: latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+
+      - name: Install Skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      - name: Verify Image with Skopeo
+        run: skopeo inspect docker://ghcr.io/snowflake7778/note-api:${{ env.tag }}
+
+      - name: Copy Image to GCR
+        env:
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+        run: |
+          echo "${GCP_SERVICE_ACCOUNT_KEY}" > gcp-key.json
+          gcloud auth activate-service-account --key-file=gcp-key.json
+          skopeo copy docker://ghcr.io/snowflake7778/note-api:${{ env.tag }} docker://gcr.io/note-api-hs-heilbronn-devsecops-fireball/note-api:${{ env.tag }}
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
