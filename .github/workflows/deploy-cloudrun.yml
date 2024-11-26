@@ -15,29 +15,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
 
-      - name: Install Skopeo
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y skopeo
-
-      - name: Verify Image with Skopeo
-        run: skopeo inspect docker://ghcr.io/snowflake7778/note-api:${{ env.tag }}
-
-      - name: Copy Image to GCR
-        env:
-          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-        run: |
-          echo "${GCP_SERVICE_ACCOUNT_KEY}" > gcp-key.json
-          gcloud auth activate-service-account --key-file=gcp-key.json
-          skopeo copy docker://ghcr.io/snowflake7778/note-api:${{ env.tag }} docker://gcr.io/note-api-hs-heilbronn-devsecops-fireball/note-api:${{ env.tag }}
-
-      - name: Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud using Workload Identity Federation
         uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/github-repos'
+          workload_identity_provider: 'projects/70756149774/locations/global/workloadIdentityPools/github-actions/providers/github-repos'
           service_account: 'hshn-devsecops-service-account@hs-heilbronn-devsecops.iam.gserviceaccount.com'
-      
-      - name: Set Google Cloud Project
+
+      - name: Set Google Cloud Project and Region
         run: |
           gcloud config set project 707561499774
           gcloud config set run/region europe-west3
@@ -45,6 +29,6 @@ jobs:
       - name: Deploy to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v1
         with:
-          services: note-api-fireballs
+          service: note-api-hs-heilbronn-fireballs
           image: ghcr.io/Snowflake7778/note-api:${{ env.tag }}
           env_vars: BACKEND=memory
