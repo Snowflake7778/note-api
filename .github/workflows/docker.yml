@@ -10,6 +10,8 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    env:
+      tag: latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
